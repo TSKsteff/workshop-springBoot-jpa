@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import br.univali.coursespring.entities.User;
 import br.univali.coursespring.repositories.UserRepository;
@@ -31,7 +33,13 @@ public class UserService {
 	}
 	
 	public void delete(Long id) {
-		userRepository.deleteById(id);
+		try {
+			userRepository.deleteById(id);
+		}catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundExceptoin(id);
+		}catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public User uodate(long id, User obj) {
